@@ -13,6 +13,7 @@ import { AppDispatch } from '../../store/store';
 import {
   getMovieCredit,
   getMovieDetails,
+  getRecommendedMovie,
   movieSelector,
 } from '../../store/MovieSlice';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -28,7 +29,8 @@ type Props = NativeStackScreenProps<CustomNavigatorList, 'Movie Detail'>;
 export default function MovieDetail({ route }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const { movieId } = route.params;
-  const { getMovieDetailObj, getMovieCreditObj } = useSelector(movieSelector);
+  const { getMovieDetailObj, getMovieCreditObj, getRecommendedMovieObj } =
+    useSelector(movieSelector);
   useEffect(() => {
     fetchMovieData();
   }, []);
@@ -47,6 +49,14 @@ export default function MovieDetail({ route }: Props) {
 
       if (creditResult.meta.requestStatus === 'rejected') {
         throw creditResult.error;
+      }
+
+      const recommendedResult: any = await AppDispatch(
+        getRecommendedMovie({ movieId }),
+      );
+
+      if (recommendedResult.meta.requestStatus === 'rejected') {
+        throw recommendedResult.error;
       }
     } catch (error: any) {
       Alert.alert('Request Failed', error?.message || 'Something went wrong');
@@ -208,15 +218,7 @@ export default function MovieDetail({ route }: Props) {
           </View>
           <View style={{ height: DEFAULT_SPACING }} />
           <View style={{ height: DEFAULT_SPACING }} />
-          <AppText
-            style={{
-              fontSize: 20,
-              fontWeight: '700',
-              marginLeft: DEFAULT_SPACING * 2,
-            }}
-          >
-            Top Billed Cast
-          </AppText>
+          <AppText style={styles.SectionTitle}>Top Billed Cast</AppText>
           <FlatList
             contentContainerStyle={{ padding: 20 }}
             horizontal
@@ -236,6 +238,38 @@ export default function MovieDetail({ route }: Props) {
                     {item.character}
                   </AppText>
                   <AppText>{item.name}</AppText>
+                </View>
+              </View>
+            )}
+          />
+          <View style={{ height: DEFAULT_SPACING }} />
+          <View style={{ height: DEFAULT_SPACING }} />
+          {getRecommendedMovieObj.payload?.results?.length > 0 && (
+            <AppText style={styles.SectionTitle}>Recommedations</AppText>
+          )}
+          <FlatList
+            contentContainerStyle={{ padding: 20 }}
+            horizontal
+            data={getRecommendedMovieObj.payload?.results || []}
+            renderItem={({ item, index }) => (
+              <View style={styles.RecommendationContainer}>
+                <Image
+                  resizeMode="cover"
+                  style={styles.RecommendationImg}
+                  source={{
+                    uri: `${process.env.API_IMAGE_DOMAIN}/w200${item.backdrop_path}`,
+                  }}
+                />
+
+                <View
+                  style={{
+                    padding: DEFAULT_SPACING,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <AppText style={{ fontWeight: 'bold' }}>{item.title}</AppText>
+                  <AppText>{`${item.popularity.toFixed(2)}%`}</AppText>
                 </View>
               </View>
             )}
@@ -294,6 +328,19 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
   },
+  RecommendationContainer: {
+    ...SHADOW_STYLE,
+    backgroundColor: COLORS.white,
+    marginHorizontal: DEFAULT_SPACING / 2,
+    width: 300,
+    borderRadius: 8,
+  },
+  RecommendationImg: {
+    width: 300,
+    height: 154,
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
+  },
   PG13Container: {
     borderWidth: 1,
     borderColor: COLORS.white,
@@ -310,5 +357,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'space-evenly',
+  },
+  SectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginLeft: DEFAULT_SPACING * 2,
   },
 });

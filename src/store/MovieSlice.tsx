@@ -18,6 +18,7 @@ interface InitialState {
   getPopularMovieListObj: InterfaceInitialState;
   getMovieDetailObj: InterfaceInitialState;
   getMovieCreditObj: InterfaceInitialState;
+  getRecommendedMovieObj: InterfaceInitialState;
 }
 
 export const getNowPlayingMovieList = createAsyncThunk(
@@ -55,6 +56,13 @@ export const getMovieCredit = createAsyncThunk(
   },
 );
 
+export const getRecommendedMovie = createAsyncThunk(
+  '/movie/recommended',
+  async ({ movieId }: { movieId: number }) => {
+    return get(`/movie/${movieId}/recommendations?language=en-US&page=1`);
+  },
+);
+
 export const MovieSlice = createSlice({
   name: 'movie',
   initialState: {
@@ -79,6 +87,11 @@ export const MovieSlice = createSlice({
       payload: null,
     },
     getMovieCreditObj: {
+      status: 'idle',
+      message: '',
+      payload: null,
+    },
+    getRecommendedMovieObj: {
       status: 'idle',
       message: '',
       payload: null,
@@ -155,6 +168,20 @@ export const MovieSlice = createSlice({
       state.getMovieCreditObj.message = action.error.message || '';
       state.getMovieCreditObj.status = 'rejected';
       state.getMovieCreditObj.payload = null;
+    });
+    builder.addCase(getRecommendedMovie.pending, state => {
+      state.getRecommendedMovieObj.status = 'pending';
+      state.getRecommendedMovieObj.payload = null;
+    });
+    builder.addCase(getRecommendedMovie.fulfilled, (state, action) => {
+      state.getRecommendedMovieObj.message = '';
+      state.getRecommendedMovieObj.status = 'succeeded';
+      state.getRecommendedMovieObj.payload = action.payload;
+    });
+    builder.addCase(getRecommendedMovie.rejected, (state, action) => {
+      state.getRecommendedMovieObj.message = action.error.message || '';
+      state.getRecommendedMovieObj.status = 'rejected';
+      state.getRecommendedMovieObj.payload = null;
     });
   },
 });
