@@ -10,28 +10,57 @@ export interface MovieDetails {
   poster_path: string;
   release_date: string;
   id: number;
+  vote_average: number;
 }
-export default function MovieItemBox({ item }: { item: MovieDetails }) {
+export default function MovieItemBox({
+  item,
+  onRemoveFromWishList,
+  isWishList,
+}: {
+  item: MovieDetails;
+  onRemoveFromWishList?: (id: number) => void;
+  isWishList?: boolean;
+}) {
   const navigator = useCustomNavigation();
+  const { title, overview, poster_path, release_date, id } = item;
+
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() =>
-        navigator.navigate(SCREEN_KEY.MOVIE_DETAIL, { movieId: item.id })
+        navigator.navigate(SCREEN_KEY.MOVIE_DETAIL, { movieId: id })
       }
     >
+      {isWishList && onRemoveFromWishList && (
+        <TouchableOpacity
+          onPress={() => onRemoveFromWishList(id)}
+          style={{
+            zIndex: 999,
+            padding: DEFAULT_SPACING,
+            position: 'absolute',
+            right: DEFAULT_SPACING,
+            top: DEFAULT_SPACING,
+          }}
+        >
+          <Image
+            source={require('../assets/remove.png')}
+            style={{ width: 10, height: 10 }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
       <Image
         style={styles.posterImg}
         resizeMode="contain"
         source={{
-          uri: `${process.env.API_IMAGE_DOMAIN}/w200${item.poster_path}`,
+          uri: `${process.env.API_IMAGE_DOMAIN}/w200${poster_path}`,
         }}
       />
       <View style={styles.textBox}>
-        <AppText variant="Movie-Title">{item.title}</AppText>
-        <AppText variant="Date-Time-Placeholder">{item.release_date}</AppText>
+        <AppText variant="Movie-Title">{title}</AppText>
+        <AppText variant="Date-Time-Placeholder">{release_date}</AppText>
         <AppText numberOfLines={2} style={{ marginTop: DEFAULT_SPACING }}>
-          {item.overview}
+          {overview}
         </AppText>
       </View>
     </TouchableOpacity>

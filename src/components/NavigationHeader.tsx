@@ -73,7 +73,14 @@ export default function NavigationHeader({
       }}
     >
       {getLeftButton()}
-      {title && <AppText variant="Navigatior-Title">{title}</AppText>}
+      {title && (
+        <AppText
+          style={{ color: isBlackColor ? '#000000' : '#FFFFFF' }}
+          variant="Navigatior-Title"
+        >
+          {title}
+        </AppText>
+      )}
       {getRightButton()}
     </View>
   );

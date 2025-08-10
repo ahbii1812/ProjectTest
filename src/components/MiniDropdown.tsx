@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import {
-  COLORS,
-  DEFAULT_SPACING,
-  FIELD_HEIGHT,
-  SHADOW_STYLE,
-} from '../theme/theme';
+import { COLORS, DEFAULT_SPACING } from '../theme/theme';
 import AppText from './AppText';
 
 interface Item {
@@ -21,7 +16,7 @@ interface Props {
   placeholder?: string;
 }
 
-export default function DropdownPicker({
+export default function MiniDropdown({
   value,
   setValue,
   itemList,
@@ -35,21 +30,14 @@ export default function DropdownPicker({
         placeholder={placeholder}
         placeholderStyle={{ fontSize: 14 }}
         renderItem={(item, selected) => (
-          <View
-            style={{
-              backgroundColor: selected ? '#00B4E4' : '#F8F8F8',
-              padding: DEFAULT_SPACING,
-            }}
-          >
-            <AppText variant={selected ? 'Picker-Selected' : null}>
+          <View style={{ padding: DEFAULT_SPACING }}>
+            <AppText style={{ color: selected ? '#00B4E4' : '#000000' }}>
               {item.label}
             </AppText>
           </View>
         )}
         style={[styles.dropdown]}
-        itemContainerStyle={{
-          marginVertical: DEFAULT_SPACING - 5,
-        }}
+        itemContainerStyle={{}}
         containerStyle={{
           marginTop: -7,
           padding: DEFAULT_SPACING,
@@ -69,17 +57,7 @@ export default function DropdownPicker({
           setValue(item.value);
           setIsFocus(false);
         }}
-        renderRightIcon={() => (
-          <Image
-            source={require('../assets/right-arrow.png')}
-            style={{
-              width: 15,
-              height: 15,
-              transform: [{ rotate: isFocus ? '90deg' : '0deg' }],
-            }}
-            resizeMode="contain"
-          />
-        )}
+        iconColor={COLORS.theme}
       />
     </View>
   );
@@ -87,15 +65,15 @@ export default function DropdownPicker({
 
 const styles = StyleSheet.create({
   container: {
+    width: 130,
     backgroundColor: COLORS.white,
-    ...SHADOW_STYLE,
     borderRadius: 8,
+    borderWidth: 0,
   },
   dropdown: {
-    height: FIELD_HEIGHT,
-    borderColor: '#E3E3E3',
-    borderWidth: 0.5,
-    paddingHorizontal: 8,
+    borderColor: COLORS.theme,
+    borderBottomWidth: 2,
+    height: 35,
   },
   icon: {
     marginRight: 5,
@@ -103,14 +81,10 @@ const styles = StyleSheet.create({
 
   selectedTextStyle: {
     fontSize: 14,
-    fontWeight: '600',
+    color: COLORS.theme,
   },
   iconStyle: {
     width: 20,
     height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
   },
 });

@@ -7,6 +7,7 @@ import {
   RefreshControl,
   SafeAreaView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { AppDispatch } from '../../store/store';
@@ -23,6 +24,9 @@ import AppHeader from '../../components/AppHeader';
 import AppText from '../../components/AppText';
 import NavigationHeader from '../../components/NavigationHeader';
 import { useSelector } from 'react-redux';
+import { getData, storeData } from '../../store/LocalStorage';
+import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
+import { MovieDetails } from '../../components/MovieItemBox';
 
 type Props = NativeStackScreenProps<CustomNavigatorList, 'Movie Detail'>;
 
@@ -31,9 +35,41 @@ export default function MovieDetail({ route }: Props) {
   const { movieId } = route.params;
   const { getMovieDetailObj, getMovieCreditObj, getRecommendedMovieObj } =
     useSelector(movieSelector);
+
+  const [isWishList, setIsWishList] = useState(false);
+
   useEffect(() => {
     fetchMovieData();
+    getData(LOCAL_STORAGE_KEY.WISHLIST).then(i => {
+      if (i) {
+        const item = i.find((item: MovieDetails) => item.id === movieId);
+        if (item) {
+          setIsWishList(() => true);
+        }
+      }
+    });
   }, []);
+
+  const onPressWishList = () => {
+    const movieDetails = [
+      {
+        id: getMovieDetailObj.payload?.id,
+        title: getMovieDetailObj.payload?.title,
+        overview: getMovieDetailObj.payload?.overview,
+        poster_path: getMovieDetailObj.payload?.poster_path,
+        release_date: getMovieDetailObj.payload?.release_date,
+        vote_average: getMovieDetailObj.payload?.vote_average,
+      },
+    ];
+    getData(LOCAL_STORAGE_KEY.WISHLIST).then(i => {
+      if (i) {
+        storeData(LOCAL_STORAGE_KEY.WISHLIST, [...movieDetails, ...i]);
+      } else {
+        storeData(LOCAL_STORAGE_KEY.WISHLIST, movieDetails);
+      }
+    });
+    setIsWishList(() => true);
+  };
 
   const fetchMovieData = async () => {
     try {
@@ -198,6 +234,24 @@ export default function MovieDetail({ route }: Props) {
               </AppText>
               <View style={{ height: DEFAULT_SPACING }} />
               <View style={{ height: DEFAULT_SPACING }} />
+              {!isWishList && (
+                <TouchableOpacity
+                  style={styles.AddToWishListButton}
+                  onPress={onPressWishList}
+                >
+                  <Image
+                    source={require('../../assets/bookmark.png')}
+                    style={{ width: 15, height: 20 }}
+                    resizeMode="contain"
+                  />
+                  <View style={{ width: DEFAULT_SPACING }} />
+                  <AppText variant="Movie-Detail-Value">
+                    Add to wishlist
+                  </AppText>
+                </TouchableOpacity>
+              )}
+              <View style={{ height: DEFAULT_SPACING }} />
+              <View style={{ height: DEFAULT_SPACING }} />
             </View>
           </View>
           <View style={{ height: DEFAULT_SPACING }} />
@@ -229,7 +283,7 @@ export default function MovieDetail({ route }: Props) {
           <View style={{ height: DEFAULT_SPACING }} />
           <View style={{ height: DEFAULT_SPACING }} />
           {getRecommendedMovieObj.payload?.results?.length > 0 && (
-            <AppText style={styles.SectionTitle}>Recommedations</AppText>
+            <AppText style={styles.SectionTitle}>Recommended movies</AppText>
           )}
           <FlatList
             contentContainerStyle={{ padding: 20 }}
@@ -241,7 +295,7 @@ export default function MovieDetail({ route }: Props) {
                   resizeMode="cover"
                   style={styles.RecommendationImg}
                   source={{
-                    uri: `${process.env.API_IMAGE_DOMAIN}/w200${item.backdrop_path}`,
+                    uri: `${process.env.API_IMAGE_DOMAIN}/w500${item.backdrop_path}`,
                   }}
                 />
 
@@ -287,7 +341,7 @@ export default function MovieDetail({ route }: Props) {
         </View>
       </View>
     );
-  }, [getMovieDetailObj.status, getMovieCreditObj.status]);
+  }, [getMovieDetailObj.status, getMovieCreditObj.status, isWishList]);
 
   // getMovieDetailObj, getMovieCreditObj
   return (
@@ -309,6 +363,16 @@ export default function MovieDetail({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
+  AddToWishListButton: {
+    borderRadius: 8,
+    width: 150,
+    borderWidth: 1,
+    borderColor: COLORS.white,
+    padding: DEFAULT_SPACING,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
   CastMemberContainer: {
     ...SHADOW_STYLE,
     backgroundColor: COLORS.white,
