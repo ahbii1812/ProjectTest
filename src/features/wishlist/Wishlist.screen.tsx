@@ -94,9 +94,7 @@ export default function WishlistScreen() {
                     {getUserDetailsObj.payload?.username || 'Username'}
                   </AppText>
                   {/* No Info from API */}
-                  <AppText variant="Movie-Detail-Label">
-                    Joined Aug 2025
-                  </AppText>
+                  <AppText variant="SemiBody2">Joined Aug 2025</AppText>
                 </View>
               </View>
             </View>

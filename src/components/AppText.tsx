@@ -9,11 +9,10 @@ export default function AppText({
   style?: StyleProp<TextStyle>;
   children: string;
   variant?:
-    | 'Movie-Title'
-    | 'Movie-Detail-Label'
-    | 'Movie-Detail-Value'
-    | 'Date-Time-Placeholder'
-    | 'Picker-Selected'
+    | 'SemiBody'
+    | 'SemiBody2'
+    | 'RegularBody2'
+    | 'RegularBody2Placeholder'
     | 'Button-Label'
     | 'Navigatior-Title'
     | 'Overview-Label'
@@ -41,7 +40,7 @@ export default function AppText({
     );
   }
 
-  if (variant === 'Movie-Detail-Label') {
+  if (variant === 'SemiBody2') {
     return (
       <Text
         style={[{ fontWeight: '600', fontSize: 14, color: '#FFFFFF' }, style]}
@@ -50,7 +49,7 @@ export default function AppText({
       </Text>
     );
   }
-  if (variant === 'Movie-Detail-Value') {
+  if (variant === 'RegularBody2') {
     return (
       <Text
         style={[{ fontWeight: '400', fontSize: 14, color: '#FFFFFF' }, style]}
@@ -60,7 +59,7 @@ export default function AppText({
     );
   }
 
-  if (variant === 'Movie-Title') {
+  if (variant === 'SemiBody') {
     return (
       <Text style={[{ fontWeight: '600', fontSize: 16 }, style]}>
         {children}
@@ -68,17 +67,9 @@ export default function AppText({
     );
   }
 
-  if (variant === 'Date-Time-Placeholder') {
+  if (variant === 'RegularBody2Placeholder') {
     return (
       <Text style={[{ color: '#999999', fontSize: 14 }, style]} {...props}>
-        {children}
-      </Text>
-    );
-  }
-
-  if (variant === 'Picker-Selected') {
-    return (
-      <Text style={[{ color: '#FFFFFF', fontSize: 14 }, style]} {...props}>
         {children}
       </Text>
     );

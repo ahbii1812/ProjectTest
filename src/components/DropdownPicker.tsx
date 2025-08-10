@@ -33,7 +33,7 @@ export default function DropdownPicker({
     <View style={styles.container}>
       <Dropdown
         placeholder={placeholder}
-        placeholderStyle={{ fontSize: 14 }}
+        placeholderStyle={{ fontSize: 14, color: COLORS.placeholder }}
         renderItem={(item, selected) => (
           <View
             style={{
@@ -41,7 +41,7 @@ export default function DropdownPicker({
               padding: DEFAULT_SPACING,
             }}
           >
-            <AppText variant={selected ? 'Picker-Selected' : null}>
+            <AppText variant={selected ? 'RegularBody2' : null}>
               {item.label}
             </AppText>
           </View>

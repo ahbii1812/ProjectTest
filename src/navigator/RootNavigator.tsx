@@ -19,10 +19,7 @@ export default function RootNavigator() {
           name={SCREEN_KEY.BOTTOM_NAV}
           component={BottomTabNavigator}
         />
-        <Stack.Screen
-          name={SCREEN_KEY.MOVIE_DETAIL}
-          component={(i: any) => <MovieDetail {...i} />}
-        />
+        <Stack.Screen name={SCREEN_KEY.MOVIE_DETAIL} component={MovieDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );

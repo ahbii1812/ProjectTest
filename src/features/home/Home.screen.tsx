@@ -143,7 +143,7 @@ export default function HomeScreen() {
       return (
         <View style={{ alignItems: 'center' }}>
           <AppText>Unable to retrieve data</AppText>
-          <AppText variant="Date-Time-Placeholder">
+          <AppText variant="RegularBody2Placeholder">
             Pull down to refresh
           </AppText>
         </View>

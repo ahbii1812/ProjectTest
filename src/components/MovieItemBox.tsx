@@ -57,8 +57,8 @@ export default function MovieItemBox({
         }}
       />
       <View style={styles.textBox}>
-        <AppText variant="Movie-Title">{title}</AppText>
-        <AppText variant="Date-Time-Placeholder">{release_date}</AppText>
+        <AppText variant="SemiBody">{title}</AppText>
+        <AppText variant="RegularBody2Placeholder">{release_date}</AppText>
         <AppText numberOfLines={2} style={{ marginTop: DEFAULT_SPACING }}>
           {overview}
         </AppText>

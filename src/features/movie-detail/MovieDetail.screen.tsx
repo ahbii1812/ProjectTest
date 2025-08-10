@@ -17,7 +17,6 @@ import {
   getRecommendedMovie,
   movieSelector,
 } from '../../store/MovieSlice';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CustomNavigatorList } from '../../navigator/CustomNavHook';
 import { COLORS, DEFAULT_SPACING, SHADOW_STYLE } from '../../theme/theme';
 import AppHeader from '../../components/AppHeader';
@@ -28,10 +27,12 @@ import { getData, storeData } from '../../store/LocalStorage';
 import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
 import { MovieDetails } from '../../components/MovieItemBox';
 import Spacer from '../../components/Spacer';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
-type Props = NativeStackScreenProps<CustomNavigatorList, 'Movie Detail'>;
+type Props = RouteProp<CustomNavigatorList, 'Movie Detail'>;
 
-export default function MovieDetail({ route }: Props) {
+export default function MovieDetail() {
+  const route = useRoute<Props>();
   const [refreshing, setRefreshing] = useState(false);
   const { movieId } = route.params;
   const { getMovieDetailObj, getMovieCreditObj, getRecommendedMovieObj } =
@@ -162,27 +163,27 @@ export default function MovieDetail({ route }: Props) {
                 <Spacer oriental="horizontal" />
                 <View style={styles.DetailsContainer}>
                   <View style={styles.PG13Container}>
-                    <AppText variant="Movie-Detail-Value">
+                    <AppText variant="RegularBody2">
                       {getMovieDetailObj.payload?.adult ? 'M 18' : 'PG 13'}
                     </AppText>
                   </View>
-                  <AppText variant="Movie-Detail-Value">
+                  <AppText variant="RegularBody2">
                     {`${getMovieDetailObj.payload?.release_date}(${
                       getMovieDetailObj.payload?.origin_country[0]
                     }) • ${Math.floor(
                       getMovieDetailObj.payload?.runtime / 60,
                     )}h ${getMovieDetailObj.payload?.runtime % 60}mins`}
                   </AppText>
-                  <AppText variant="Movie-Detail-Value">{getGenres}</AppText>
+                  <AppText variant="RegularBody2">{getGenres}</AppText>
                   <View style={{ flexDirection: 'row' }}>
-                    <AppText variant="Movie-Detail-Label">{`Status: `}</AppText>
-                    <AppText variant="Movie-Detail-Value">
+                    <AppText variant="SemiBody2">{`Status: `}</AppText>
+                    <AppText variant="RegularBody2">
                       {getMovieDetailObj.payload?.status}
                     </AppText>
                   </View>
                   <View style={{ flexDirection: 'row' }}>
-                    <AppText variant="Movie-Detail-Label">{`Original Language: `}</AppText>
-                    <AppText variant="Movie-Detail-Value">
+                    <AppText variant="SemiBody2">{`Original Language: `}</AppText>
+                    <AppText variant="RegularBody2">
                       {getMovieDetailObj.payload?.original_language.toUpperCase()}
                     </AppText>
                   </View>
@@ -198,24 +199,20 @@ export default function MovieDetail({ route }: Props) {
                     alignItems: 'center',
                   }}
                 >
-                  <AppText variant="Movie-Detail-Label">
+                  <AppText variant="SemiBody2">
                     {getMovieDetailObj.payload?.vote_average}
                   </AppText>
                   <Spacer />
-                  <AppText variant="Movie-Detail-Label">Avg. Rating</AppText>
+                  <AppText variant="SemiBody2">Avg. Rating</AppText>
                 </View>
                 <View style={{ width: '50%' }}>
-                  <AppText variant="Movie-Detail-Label">
-                    {getDirectorName}
-                  </AppText>
-                  <AppText variant="Movie-Detail-Value">
-                    Director, Writer
-                  </AppText>
+                  <AppText variant="SemiBody2">{getDirectorName}</AppText>
+                  <AppText variant="RegularBody2">Director, Writer</AppText>
                   <Spacer />
-                  <AppText variant="Movie-Detail-Label">
-                    {getWriterName}
-                  </AppText>
-                  <AppText variant="Movie-Detail-Value">Writer</AppText>
+                  <AppText variant="SemiBody2">{getWriterName}</AppText>
+                  {getWriterName && (
+                    <AppText variant="RegularBody2">Writer</AppText>
+                  )}
                 </View>
               </View>
               <Spacer />
@@ -230,7 +227,7 @@ export default function MovieDetail({ route }: Props) {
               <Spacer />
               <AppText variant="Overview-Label">Overview</AppText>
               <Spacer />
-              <AppText variant="Movie-Detail-Value">
+              <AppText variant="RegularBody2">
                 {getMovieDetailObj.payload?.overview}
               </AppText>
               <Spacer />
@@ -246,9 +243,7 @@ export default function MovieDetail({ route }: Props) {
                     resizeMode="contain"
                   />
                   <Spacer oriental="horizontal" />
-                  <AppText variant="Movie-Detail-Value">
-                    Add to wishlist
-                  </AppText>
+                  <AppText variant="RegularBody2">Add to wishlist</AppText>
                 </TouchableOpacity>
               )}
               <Spacer />
@@ -282,7 +277,7 @@ export default function MovieDetail({ route }: Props) {
             )}
           />
           <Spacer />
-          <Spacer />s
+          <Spacer />
           {getRecommendedMovieObj.payload?.results?.length > 0 && (
             <AppText style={styles.SectionTitle}>Recommended movies</AppText>
           )}
@@ -326,7 +321,7 @@ export default function MovieDetail({ route }: Props) {
           <NavigationHeader isBlackColor />
           <View style={styles.CenteredContainer}>
             <AppText>Unable to retrieve data</AppText>
-            <AppText variant="Date-Time-Placeholder">
+            <AppText variant="RegularBody2Placeholder">
               Pull down to refresh
             </AppText>
           </View>
