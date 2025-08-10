@@ -13,7 +13,7 @@ import {
   SHADOW_STYLE,
 } from '../../theme/theme';
 import AppHeader from '../../components/AppHeader';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppDispatch } from '../../store/store';
 import {
   getNowPlayingMovieList,
@@ -33,6 +33,7 @@ export default function HomeScreen() {
   const [category, setCategory] = useState<MovieCategory>('now_playing');
   const [data, setData] = useState<any>([]);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [tempSearch, setTempSearch] = useState<string>('');
   const {
     getNowPlayingMovieListObj,
     getPopularMovieListObj,
@@ -71,6 +72,8 @@ export default function HomeScreen() {
   }, []);
 
   const onCategoryChange = (value: MovieCategory) => {
+    setSearchValue('');
+    setTempSearch('');
     setCategory(value);
     setData([]);
     const fetcher = categoryFetchers[value];
@@ -84,6 +87,14 @@ export default function HomeScreen() {
       }
     });
   };
+
+  const getData = useMemo(() => {
+    return (
+      data.filter((item: MovieDetails) =>
+        item.title.toLowerCase().includes(tempSearch.toLowerCase()),
+      ) || []
+    );
+  }, [data, tempSearch]);
 
   const renderContent = () => {
     const statusMap = {
@@ -145,12 +156,15 @@ export default function HomeScreen() {
               returnKeyType="done"
             />
             <View style={{ height: DEFAULT_SPACING }} />
-            <CTAButton text="Search" onPress={() => {}} />
+            <CTAButton
+              text="Search"
+              onPress={() => setTempSearch(searchValue)}
+            />
             <View style={{ height: DEFAULT_SPACING }} />
           </View>
         }
-        extraData={data}
-        data={data || []}
+        extraData={getData}
+        data={getData}
         renderItem={({ item }: { item: MovieDetails }) => (
           <MovieItemBox item={item} />
         )}
