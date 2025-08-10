@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MovieDetail from '../features/movie-detail/MovieDetail.screen';
 import { SCREEN_KEY } from '../constants/ScreenKey';
 import BottomTabNavigator from './BottomTabNavigator';
-import { COLORS } from '../theme/theme';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +19,10 @@ export default function RootNavigator() {
           name={SCREEN_KEY.BOTTOM_NAV}
           component={BottomTabNavigator}
         />
-        <Stack.Screen name={SCREEN_KEY.MOVIE_DETAIL} component={MovieDetail} />
+        <Stack.Screen
+          name={SCREEN_KEY.MOVIE_DETAIL}
+          component={(i: any) => <MovieDetail {...i} />}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -11,6 +11,7 @@ interface NavigationBar {
   onPressRightIcon?: () => void;
   transparent?: boolean;
   disableBack?: boolean;
+  isBlackColor?: boolean;
 }
 export default function NavigationHeader({
   title,
@@ -18,6 +19,7 @@ export default function NavigationHeader({
   rightIcon,
   transparent = false,
   disableBack = false,
+  isBlackColor = false,
 }: NavigationBar) {
   const navigator = useNavigation();
   const getLeftButton = () => {
@@ -30,7 +32,11 @@ export default function NavigationHeader({
         >
           <Image
             source={require('./../assets/left-arrow.png')}
-            style={{ width: 25, height: 25 }}
+            style={{
+              width: 25,
+              height: 25,
+              tintColor: isBlackColor ? '#000000' : '#FFFFFF',
+            }}
           />
         </TouchableOpacity>
       );

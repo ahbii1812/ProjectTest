@@ -75,7 +75,7 @@ export default function MovieDetail({ route }: Props) {
       getMovieDetailObj.payload.genres?.map((item: any) => {
         type.push(item.name);
       });
-      return type.toString();
+      return type.toString().replace(/,/g, ', ');
     }
     return '';
   }, [getMovieDetailObj.status]);
@@ -101,22 +101,6 @@ export default function MovieDetail({ route }: Props) {
   }, [getMovieCreditObj.status]);
 
   const renderContent = useMemo(() => {
-    if (
-      getMovieCreditObj.status === 'rejected' ||
-      getMovieDetailObj.status === 'rejected'
-    ) {
-      return (
-        <View
-          style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}
-        >
-          <AppText>Unable to retrieve data</AppText>
-          <AppText variant="Date-Time-Placeholder">
-            Pull down to refresh
-          </AppText>
-        </View>
-      );
-    }
-
     if (
       getMovieCreditObj.status === 'succeeded' &&
       getMovieDetailObj.status === 'succeeded'
@@ -278,9 +262,29 @@ export default function MovieDetail({ route }: Props) {
       );
     }
 
+    if (
+      getMovieCreditObj.status === 'rejected' ||
+      getMovieDetailObj.status === 'rejected'
+    ) {
+      return (
+        <View style={{ minHeight: 300 }}>
+          <NavigationHeader isBlackColor />
+          <View style={styles.CenteredContainer}>
+            <AppText>Unable to retrieve data</AppText>
+            <AppText variant="Date-Time-Placeholder">
+              Pull down to refresh
+            </AppText>
+          </View>
+        </View>
+      );
+    }
+
     return (
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
+      <View style={{ minHeight: 300 }}>
+        <NavigationHeader isBlackColor />
+        <View style={styles.CenteredContainer}>
+          <ActivityIndicator />
+        </View>
       </View>
     );
   }, [getMovieDetailObj.status, getMovieCreditObj.status]);
@@ -297,17 +301,7 @@ export default function MovieDetail({ route }: Props) {
         stickyHeaderHiddenOnScroll
         stickyHeaderIndices={[0]}
         renderItem={({ item, index }) => (
-          <View
-            key={index}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              flex: 1,
-              minHeight: 300,
-            }}
-          >
-            {renderContent}
-          </View>
+          <View key={index}>{renderContent}</View>
         )}
       />
     </SafeAreaView>
@@ -362,5 +356,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginLeft: DEFAULT_SPACING * 2,
+  },
+  CenteredContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
 });

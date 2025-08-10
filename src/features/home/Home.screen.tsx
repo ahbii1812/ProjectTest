@@ -55,6 +55,11 @@ export default function HomeScreen() {
         fetchData(category);
       }
     });
+    getData(LOCAL_STORAGE_KEY.SORTING_PREFERENCE).then(i => {
+      if (i) {
+        setSortBy(() => i);
+      }
+    });
   }, []);
 
   const categoryFetchers = {
