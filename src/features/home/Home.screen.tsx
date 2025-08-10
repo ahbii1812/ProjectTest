@@ -28,6 +28,8 @@ import TextInputField from '../../components/TextInputField';
 import CTAButton from '../../components/CTAButton';
 import { useSelector } from 'react-redux';
 import AppText from '../../components/AppText';
+import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
+import { getData, storeData } from '../../store/LocalStorage';
 
 export default function HomeScreen() {
   const [category, setCategory] = useState<MovieCategory>('now_playing');
@@ -41,6 +43,11 @@ export default function HomeScreen() {
   } = useSelector(movieSelector);
 
   useEffect(() => {
+    getData(LOCAL_STORAGE_KEY.CATEGORY_PREFERENCE).then(i => {
+      if (i) {
+        setCategory(() => i);
+      }
+    });
     fetchData();
   }, []);
 
@@ -56,7 +63,7 @@ export default function HomeScreen() {
     AppDispatch(fetcher({ page: 1 })).then(({ meta, payload, error }: any) => {
       setRefreshing(false);
       if (meta.requestStatus === 'fulfilled') {
-        setData(payload.results);
+        setData(() => payload.results);
       }
       if (meta.requestStatus === 'rejected') {
         Alert.alert('Request Failed', error.message);
@@ -72,15 +79,16 @@ export default function HomeScreen() {
   }, []);
 
   const onCategoryChange = (value: MovieCategory) => {
-    setSearchValue('');
-    setTempSearch('');
-    setCategory(value);
-    setData([]);
+    setSearchValue(() => '');
+    setTempSearch(() => '');
+    setCategory(() => value);
+    setData(() => []);
+    storeData(LOCAL_STORAGE_KEY.CATEGORY_PREFERENCE, value);
     const fetcher = categoryFetchers[value];
     if (!fetcher) return;
     AppDispatch(fetcher({ page: 1 })).then(({ meta, payload, error }: any) => {
       if (meta.requestStatus === 'fulfilled') {
-        setData(payload.results);
+        setData(() => payload.results);
       }
       if (meta.requestStatus === 'rejected') {
         Alert.alert('Request Failed', error.message);
@@ -88,7 +96,7 @@ export default function HomeScreen() {
     });
   };
 
-  const getData = useMemo(() => {
+  const filteredData = useMemo(() => {
     return (
       data.filter((item: MovieDetails) =>
         item.title.toLowerCase().includes(tempSearch.toLowerCase()),
@@ -163,8 +171,8 @@ export default function HomeScreen() {
             <View style={{ height: DEFAULT_SPACING }} />
           </View>
         }
-        extraData={getData}
-        data={getData}
+        extraData={filteredData}
+        data={filteredData}
         renderItem={({ item }: { item: MovieDetails }) => (
           <MovieItemBox item={item} />
         )}
