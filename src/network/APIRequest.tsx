@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_NAME = 'https://api.themoviedb.org/3/movie';
+const API_NAME = 'https://api.themoviedb.org/3';
 
 const httpRequest = axios.create({
   baseURL: API_NAME,
@@ -8,7 +8,6 @@ const httpRequest = axios.create({
   headers: {
     Accept: 'application/json',
     Authorization: `Bearer ${process.env.API_TOKEN}`,
-    'Content-Type': '*',
   },
 });
 

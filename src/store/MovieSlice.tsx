@@ -23,35 +23,35 @@ interface InitialState {
 export const getNowPlayingMovieList = createAsyncThunk(
   '/movie/now-playing',
   async ({ page }: { page: number }) => {
-    return get(`/now_playing?language=en-US&page=${page}`);
+    return get(`/movie/now_playing?language=en-US&page=${page}`);
   },
 );
 
 export const getUpcomingMovieList = createAsyncThunk(
   '/movie/upcoming',
   async ({ page }: { page: number }) => {
-    return get(`/upcoming?language=en-US&page=${page}`);
+    return get(`/movie/upcoming?language=en-US&page=${page}`);
   },
 );
 
 export const getPopularMovieList = createAsyncThunk(
   '/movie/popular',
   async ({ page }: { page: number }) => {
-    return get(`/popular?language=en-US&page=${page}`);
+    return get(`/movie/popular?language=en-US&page=${page}`);
   },
 );
 
 export const getMovieDetails = createAsyncThunk(
   '/movie/details',
   async ({ movieId }: { movieId: number }) => {
-    return get(`/${movieId}?language=en-US`);
+    return get(`/movie/${movieId}?language=en-US`);
   },
 );
 
 export const getMovieCredit = createAsyncThunk(
   '/movie/credit',
   async ({ movieId }: { movieId: number }) => {
-    return get(`/${movieId}/credits?language=en-US`);
+    return get(`/movie/${movieId}/credits?language=en-US`);
   },
 );
 
