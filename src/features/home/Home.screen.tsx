@@ -31,8 +31,12 @@ import AppText from '../../components/AppText';
 import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
 import { getData, storeData } from '../../store/LocalStorage';
 
+type Sorting = 'alphabetical' | 'rating' | 'release date' | null;
+
 export default function HomeScreen() {
   const [category, setCategory] = useState<MovieCategory>('now_playing');
+  const [sortBy, setSortBy] = useState<Sorting>(null);
+
   const [data, setData] = useState<any>([]);
   const [searchValue, setSearchValue] = useState<string>('');
   const [tempSearch, setTempSearch] = useState<string>('');
@@ -46,9 +50,11 @@ export default function HomeScreen() {
     getData(LOCAL_STORAGE_KEY.CATEGORY_PREFERENCE).then(i => {
       if (i) {
         setCategory(() => i);
+        fetchData(i);
+      } else {
+        fetchData(category);
       }
     });
-    fetchData();
   }, []);
 
   const categoryFetchers = {
@@ -57,7 +63,7 @@ export default function HomeScreen() {
     upcoming: getUpcomingMovieList,
   };
 
-  const fetchData = () => {
+  const fetchData = (category: MovieCategory) => {
     const fetcher = categoryFetchers[category];
     if (!fetcher) return;
     AppDispatch(fetcher({ page: 1 })).then(({ meta, payload, error }: any) => {
@@ -75,7 +81,7 @@ export default function HomeScreen() {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchData();
+    fetchData(category);
   }, []);
 
   const onCategoryChange = (value: MovieCategory) => {
@@ -97,12 +103,26 @@ export default function HomeScreen() {
   };
 
   const filteredData = useMemo(() => {
-    return (
+    const filtered =
       data.filter((item: MovieDetails) =>
         item.title.toLowerCase().includes(tempSearch.toLowerCase()),
-      ) || []
-    );
-  }, [data, tempSearch]);
+      ) || [];
+    const sorted = [...filtered];
+
+    if (sortBy === 'alphabetical') {
+      sorted.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'release date') {
+      sorted.sort(
+        (a, b) =>
+          new Date(b.release_date).getTime() -
+          new Date(a.release_date).getTime(),
+      );
+    } else if (sortBy === 'rating') {
+      sorted.sort((a, b) => b.vote_average - a.vote_average);
+    }
+
+    return sorted;
+  }, [data, tempSearch, sortBy]);
 
   const renderContent = () => {
     const statusMap = {
@@ -156,9 +176,28 @@ export default function HomeScreen() {
               setValue={newValue => onCategoryChange(newValue as MovieCategory)}
             />
             <View style={{ height: DEFAULT_SPACING }} />
+            <DropdownPicker
+              placeholder="Sort by"
+              itemList={[
+                { label: 'Alphabetical', value: 'alphabetical' },
+                { label: 'Rating', value: 'rating' },
+                { label: 'Release Date', value: 'release date' },
+              ]}
+              value={sortBy as string}
+              setValue={newValue => {
+                setSortBy(newValue as Sorting);
+                storeData(LOCAL_STORAGE_KEY.SORTING_PREFERENCE, newValue);
+              }}
+            />
+            <View style={{ height: DEFAULT_SPACING }} />
             <TextInputField
               value={searchValue}
-              onChangeText={text => setSearchValue(() => text)}
+              onChangeText={text => {
+                if (text === '') {
+                  setTempSearch(() => text);
+                }
+                setSearchValue(() => text);
+              }}
               placeholder="Search ...."
               autoFocus={false}
               returnKeyType="done"

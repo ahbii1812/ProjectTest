@@ -18,14 +18,22 @@ interface Props {
   value: string;
   setValue: (i: string) => void;
   itemList: Item[];
+  placeholder?: string;
 }
 
-export default function DropdownPicker({ value, setValue, itemList }: Props) {
+export default function DropdownPicker({
+  value,
+  setValue,
+  itemList,
+  placeholder,
+}: Props) {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <View style={styles.container}>
       <Dropdown
+        placeholder={placeholder}
+        placeholderStyle={{ fontSize: 14 }}
         renderItem={(item, selected) => (
           <View
             style={{
