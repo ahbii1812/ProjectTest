@@ -10,7 +10,6 @@ export interface MovieDetails {
   id: string;
 }
 export default function MovieItemBox({ item }: { item: MovieDetails }) {
-  console.log('WJ :: ', item);
   return (
     <View style={styles.container}>
       <Image

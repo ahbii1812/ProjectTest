@@ -8,6 +8,7 @@ const httpRequest = axios.create({
   headers: {
     Accept: 'application/json',
     Authorization: `Bearer ${process.env.API_TOKEN}`,
+    'Content-Type': 'application/json;charset=utf-8',
   },
 });
 
@@ -16,7 +17,7 @@ export const get = async (path: string) => {
   const response = await httpRequest
     .get(path)
     .then(res => {
-      console.log('res : ', res.data);
+      console.log('res : ', res);
       return res.data;
     })
     .catch(err => {

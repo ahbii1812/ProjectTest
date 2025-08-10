@@ -1,28 +1,84 @@
-import { FlatList, SafeAreaView, Text, View } from 'react-native';
-import { COLORS, SCREEN_PADDING } from '../../theme/theme';
+import { FlatList, SafeAreaView, View } from 'react-native';
+import { COLORS, DEFAULT_SPACING, SCREEN_PADDING } from '../../theme/theme';
 import AppHeader from '../../components/AppHeader';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AppDispatch } from '../../store/store';
-import { getNowPlayingMovie, movieSelector } from '../../store/MovieSlice';
+import {
+  getNowPlayingMovieList,
+  getPopularMovieList,
+  getUpcomingMovieList,
+  MovieCategory,
+} from '../../store/MovieSlice';
 import MovieItemBox, { MovieDetails } from '../../components/MovieItemBox';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import DropdownPicker from '../../components/DropdownPicker';
+import TextInputField from '../../components/TextInputField';
+import CTAButton from '../../components/CTAButton';
 
 export default function HomeScreen() {
-  const { getNowPlayingMovieObj } = useSelector(movieSelector);
+  const [category, setCategory] = useState<MovieCategory>('now_playing');
+  const [data, setData] = useState<any>([]);
+  const [searchValue, setSearchValue] = useState<string>('');
+
   useEffect(() => {
-    AppDispatch(getNowPlayingMovie()).then(error => {
-      console.log('WJ :: ', error);
-    });
+    AppDispatch(getNowPlayingMovieList({ page: 1 })).then(
+      ({ meta, payload }) => {
+        if (meta.requestStatus === 'fulfilled') {
+          setData(payload.results);
+        }
+      },
+    );
   }, []);
 
-  if (getNowPlayingMovieObj.status !== 'succeeded') return;
+  const categoryFetchers = {
+    now_playing: getNowPlayingMovieList,
+    popular: getPopularMovieList,
+    upcoming: getUpcomingMovieList,
+  };
+
+  const onCategoryChange = (value: MovieCategory) => {
+    setCategory(value);
+    setData([]);
+    const fetcher = categoryFetchers[value];
+    if (!fetcher) return;
+    AppDispatch(fetcher({ page: 1 })).then(({ meta, payload }) => {
+      if (meta.requestStatus === 'fulfilled') {
+        setData(payload.results);
+      }
+    });
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <FlatList
         contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING }}
-        ListHeaderComponent={<AppHeader />}
-        data={getNowPlayingMovieObj.payload.results}
+        ListHeaderComponent={
+          <View>
+            <AppHeader />
+            <DropdownPicker
+              itemList={[
+                { label: 'Now Playing', value: 'now_playing' },
+                { label: 'Upcoming', value: 'upcoming' },
+                { label: 'Popular', value: 'popular' },
+              ]}
+              value={category}
+              setValue={newValue => onCategoryChange(newValue as MovieCategory)}
+            />
+            <View style={{ height: DEFAULT_SPACING }} />
+            <TextInputField
+              value={searchValue}
+              onChangeText={text => setSearchValue(() => text)}
+              placeholder="Search ...."
+              autoFocus={false}
+              returnKeyType="done"
+            />
+            <View style={{ height: DEFAULT_SPACING }} />
+            <CTAButton text="Search" onPress={() => {}} />
+            <View style={{ height: DEFAULT_SPACING }} />
+            <View style={{ height: DEFAULT_SPACING }} />
+          </View>
+        }
+        extraData={data}
+        data={data || []}
         renderItem={({ item }: { item: MovieDetails }) => (
           <MovieItemBox item={item} />
         )}

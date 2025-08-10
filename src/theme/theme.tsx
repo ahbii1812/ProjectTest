@@ -1,5 +1,6 @@
 export const COLORS = {
   white: '#FFFFFF',
+  theme: '#00B4E4',
 };
 
 export const SHADOW_STYLE = {
@@ -11,9 +12,11 @@ export const SHADOW_STYLE = {
   shadowOpacity: 0.29,
   shadowRadius: 4.65,
 
-  elevation: 7,
+  elevation: 5,
 };
 
 export const SCREEN_PADDING = 20;
 
 export const DEFAULT_SPACING = 10;
+
+export const FIELD_HEIGHT = 50;
