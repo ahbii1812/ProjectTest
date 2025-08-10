@@ -2,6 +2,7 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -10,11 +11,14 @@ import AppHeader from '../../components/AppHeader';
 import AppText from '../../components/AppText';
 import NavigationHeader from '../../components/NavigationHeader';
 import MiniDropdown from '../../components/MiniDropdown';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import MovieItemBox, { MovieDetails } from '../../components/MovieItemBox';
 import { getData, storeData } from '../../store/LocalStorage';
 import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
 import { useFocusEffect } from '@react-navigation/native';
+import { AppDispatch } from '../../store/store';
+import { getUserDetails, userSelector } from '../../store/UserSlice';
+import { useSelector } from 'react-redux';
 
 type Sorting = 'alphabetical' | 'rating' | 'release date';
 
@@ -22,6 +26,11 @@ export default function WishlistScreen() {
   const [sortBy, setSortBy] = useState<Sorting>('alphabetical');
   const [wishlist, setWishlist] = useState<MovieDetails[]>([]);
   const [isAsc, setIsAsc] = useState<boolean>(true);
+  const { getUserDetailsObj } = useSelector(userSelector);
+
+  useEffect(() => {
+    AppDispatch(getUserDetails());
+  }, []);
 
   useFocusEffect(() => {
     getData(LOCAL_STORAGE_KEY.WISHLIST).then((list: MovieDetails[]) => {
@@ -69,8 +78,32 @@ export default function WishlistScreen() {
         ListHeaderComponent={
           <View style={{ backgroundColor: COLORS.white }}>
             <AppHeader />
-            <NavigationHeader isBlackColor title="My Watchlist" />
+            <View style={{ backgroundColor: COLORS.darkTheme }}>
+              <NavigationHeader transparent />
+
+              <View style={styles.UserInfoContainer}>
+                <View style={styles.AvatarContainer}>
+                  <AppText style={styles.AvatarLabel}>
+                    {getUserDetailsObj.payload?.username[0] || 'U'}
+                  </AppText>
+                </View>
+                <View style={{ width: DEFAULT_SPACING }} />
+                <View>
+                  <AppText variant="Button-Label">
+                    {getUserDetailsObj.payload?.username || 'Username'}
+                  </AppText>
+                  {/* No Info from API */}
+                  <AppText variant="Movie-Detail-Label">
+                    Joined Aug 2025
+                  </AppText>
+                </View>
+              </View>
+            </View>
+
             <View style={{ padding: DEFAULT_SPACING }}>
+              <AppText variant="Button-Label" style={{ color: '#000000' }}>
+                My Watchlist
+              </AppText>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <AppText style={{ color: COLORS.placeholder }}>
                   Filter by:
@@ -132,3 +165,26 @@ export default function WishlistScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  AvatarContainer: {
+    width: 75,
+    height: 75,
+    backgroundColor: '#9747FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+  },
+  UserInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minHeight: 130,
+    paddingHorizontal: 30,
+    marginTop: -30,
+  },
+  AvatarLabel: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: COLORS.white,
+  },
+});

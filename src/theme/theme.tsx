@@ -2,6 +2,7 @@ export const COLORS = {
   white: '#FFFFFF',
   theme: '#00B4E4',
   placeholder: '##828282',
+  darkTheme: '#032541',
 };
 
 export const SHADOW_STYLE = {
