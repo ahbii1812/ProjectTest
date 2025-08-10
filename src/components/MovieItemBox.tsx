@@ -1,22 +1,30 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import AppText from './AppText';
 import { COLORS, DEFAULT_SPACING, SHADOW_STYLE } from '../theme/theme';
+import useCustomNavigation from '../navigator/CustomNavHook';
+import { SCREEN_KEY } from '../constants/ScreenKey';
 
 export interface MovieDetails {
   title: string;
   overview: string;
   poster_path: string;
   release_date: string;
-  id: string;
+  id: number;
 }
 export default function MovieItemBox({ item }: { item: MovieDetails }) {
+  const navigator = useCustomNavigation();
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() =>
+        navigator.navigate(SCREEN_KEY.MOVIE_DETAIL, { movieId: item.id })
+      }
+    >
       <Image
         style={styles.posterImg}
         resizeMode="contain"
         source={{
-          uri: `https://image.tmdb.org/t/p/w200${item.poster_path}`,
+          uri: `${process.env.API_IMAGE_DOMAIN}/w200${item.poster_path}`,
         }}
       />
       <View style={styles.textBox}>
@@ -26,7 +34,7 @@ export default function MovieItemBox({ item }: { item: MovieDetails }) {
           {item.overview}
         </AppText>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -34,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderColor: '#E3E3E3',
-    marginVertical: DEFAULT_SPACING,
+    margin: DEFAULT_SPACING,
     flexDirection: 'row',
     backgroundColor: COLORS.white,
     ...SHADOW_STYLE,

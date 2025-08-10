@@ -1,9 +1,238 @@
-import { Text, View } from 'react-native';
+import { useEffect, useMemo } from 'react';
+import { FlatList, Image, SafeAreaView, StyleSheet, View } from 'react-native';
+import { AppDispatch } from '../../store/store';
+import {
+  getMovieCredit,
+  getMovieDetails,
+  movieSelector,
+} from '../../store/MovieSlice';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CustomNavigatorList } from '../../navigator/CustomNavHook';
+import { COLORS, DEFAULT_SPACING, SHADOW_STYLE } from '../../theme/theme';
+import AppHeader from '../../components/AppHeader';
+import AppText from '../../components/AppText';
+import NavigationHeader from '../../components/NavigationHeader';
+import { useSelector } from 'react-redux';
 
-export default function MovieDetail() {
+type Props = NativeStackScreenProps<CustomNavigatorList, 'Movie Detail'>;
+
+export default function MovieDetail({ route }: Props) {
+  const { movieId } = route.params;
+  const { getMovieDetailObj, getMovieCreditObj } = useSelector(movieSelector);
+  useEffect(() => {
+    AppDispatch(getMovieDetails({ movieId }));
+    AppDispatch(getMovieCredit({ movieId }));
+  }, []);
+
+  const getGenres = useMemo(() => {
+    const type: any = [];
+    if (getMovieDetailObj.status === 'succeeded') {
+      getMovieDetailObj.payload.genres?.map((item: any) => {
+        type.push(item.name);
+      });
+      return type.toString();
+    }
+    return '';
+  }, [getMovieDetailObj.status]);
+
+  const getDirectorName = useMemo(() => {
+    if (getMovieCreditObj.status === 'succeeded') {
+      const director = getMovieCreditObj.payload?.crew?.find(
+        (item: any) => item.job === 'Director',
+      );
+      return director?.original_name;
+    }
+    return null;
+  }, [getMovieCreditObj.status]);
+
+  const getWriterName = useMemo(() => {
+    if (getMovieCreditObj.status === 'succeeded') {
+      const writer = getMovieCreditObj.payload?.crew?.find(
+        (item: any) => item.job === 'Novel',
+      );
+      return writer?.original_name;
+    }
+    return null;
+  }, [getMovieCreditObj.status]);
+
+  if (
+    getMovieDetailObj.status !== 'succeeded' &&
+    getMovieCreditObj.status === 'succeeded'
+  )
+    return;
+
   return (
-    <View>
-      <Text>Home</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+      <FlatList
+        data={['DUMMY']}
+        ListHeaderComponent={<AppHeader />}
+        stickyHeaderHiddenOnScroll
+        stickyHeaderIndices={[0]}
+        renderItem={({ item, index }) => (
+          <View key={index}>
+            <View style={{ backgroundColor: COLORS.theme }}>
+              <View style={{ backgroundColor: 'rgba(0,0,0,0.15)' }}>
+                <NavigationHeader
+                  title={`${getMovieDetailObj.payload?.title}(${
+                    getMovieDetailObj.payload?.release_date?.split('-')[0]
+                  })`}
+                />
+                <View style={styles.PosterDetailContainer}>
+                  <Image
+                    style={{ width: 110, height: 135 }}
+                    resizeMode="cover"
+                    source={{
+                      uri: `${process.env.API_IMAGE_DOMAIN}/w500${getMovieDetailObj.payload?.poster_path}`,
+                    }}
+                  />
+                  <View style={{ width: DEFAULT_SPACING }} />
+                  <View style={styles.DetailsContainer}>
+                    <View style={styles.PG13Container}>
+                      <AppText variant="Movie-Detail-Value">
+                        {getMovieDetailObj.payload?.adult ? 'M 18' : 'PG 13'}
+                      </AppText>
+                    </View>
+                    <AppText variant="Movie-Detail-Value">
+                      {`${getMovieDetailObj.payload?.release_date}(${
+                        getMovieDetailObj.payload?.origin_country[0]
+                      }) • ${Math.floor(
+                        getMovieDetailObj.payload?.runtime / 60,
+                      )}h ${getMovieDetailObj.payload?.runtime % 60}mins`}
+                    </AppText>
+                    <AppText variant="Movie-Detail-Value">{getGenres}</AppText>
+                    <View style={{ flexDirection: 'row' }}>
+                      <AppText variant="Movie-Detail-Label">{`Status: `}</AppText>
+                      <AppText variant="Movie-Detail-Value">
+                        {getMovieDetailObj.payload?.status}
+                      </AppText>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}>
+                      <AppText variant="Movie-Detail-Label">{`Original Language: `}</AppText>
+                      <AppText variant="Movie-Detail-Value">
+                        {getMovieDetailObj.payload?.original_language.toUpperCase()}
+                      </AppText>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={{ padding: DEFAULT_SPACING }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <View
+                    style={{
+                      width: '50%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <AppText variant="Movie-Detail-Label">
+                      {getMovieDetailObj.payload?.vote_average}
+                    </AppText>
+                    <View style={{ height: DEFAULT_SPACING }} />
+                    <AppText variant="Movie-Detail-Label">Avg. Rating</AppText>
+                  </View>
+                  <View style={{ width: '50%' }}>
+                    <AppText variant="Movie-Detail-Label">
+                      {getDirectorName}
+                    </AppText>
+                    <AppText variant="Movie-Detail-Value">
+                      Director, Writer
+                    </AppText>
+                    <View style={{ height: DEFAULT_SPACING }} />
+                    <AppText variant="Movie-Detail-Label">
+                      {getWriterName}
+                    </AppText>
+                    <AppText variant="Movie-Detail-Value">Writer</AppText>
+                  </View>
+                </View>
+                <View style={{ height: DEFAULT_SPACING }} />
+                <View style={{ height: DEFAULT_SPACING }} />
+                <AppText
+                  style={{
+                    fontStyle: 'italic',
+                    fontSize: 20,
+                    color: COLORS.white,
+                  }}
+                >{`${getMovieDetailObj.payload?.tagline}`}</AppText>
+                <View style={{ height: DEFAULT_SPACING }} />
+                <AppText variant="Overview-Label">Overview</AppText>
+                <View style={{ height: DEFAULT_SPACING }} />
+                <AppText variant="Movie-Detail-Value">
+                  {getMovieDetailObj.payload?.overview}
+                </AppText>
+                <View style={{ height: DEFAULT_SPACING }} />
+                <View style={{ height: DEFAULT_SPACING }} />
+              </View>
+            </View>
+            <View style={{ height: DEFAULT_SPACING }} />
+            <View style={{ height: DEFAULT_SPACING }} />
+            <AppText
+              style={{
+                fontSize: 20,
+                fontWeight: '700',
+                marginLeft: DEFAULT_SPACING * 2,
+              }}
+            >
+              Top Billed Cast
+            </AppText>
+            <FlatList
+              contentContainerStyle={{ padding: 20 }}
+              horizontal
+              data={getMovieCreditObj.payload?.cast || []}
+              renderItem={({ item, index }) => (
+                <View style={styles.CastMemberContainer}>
+                  <Image
+                    resizeMode="cover"
+                    style={styles.CastMemberImg}
+                    source={{
+                      uri: `${process.env.API_IMAGE_DOMAIN}/w500${item.profile_path}`,
+                    }}
+                  />
+
+                  <View style={{ padding: DEFAULT_SPACING }}>
+                    <AppText style={{ fontWeight: 'bold' }}>
+                      {item.character}
+                    </AppText>
+                    <AppText>{item.name}</AppText>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+        )}
+      />
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  CastMemberContainer: {
+    ...SHADOW_STYLE,
+    backgroundColor: COLORS.white,
+    marginHorizontal: DEFAULT_SPACING / 2,
+    width: 150,
+    borderRadius: 8,
+  },
+  CastMemberImg: {
+    width: 150,
+    height: 154,
+    borderTopRightRadius: 8,
+    borderTopLeftRadius: 8,
+  },
+  PG13Container: {
+    borderWidth: 1,
+    borderColor: COLORS.white,
+    paddingHorizontal: DEFAULT_SPACING,
+    paddingVertical: DEFAULT_SPACING - 5,
+    borderRadius: 5,
+  },
+  PosterDetailContainer: {
+    padding: DEFAULT_SPACING,
+    flexDirection: 'row',
+    paddingVertical: DEFAULT_SPACING * 2,
+  },
+  DetailsContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'space-evenly',
+  },
+});

@@ -16,6 +16,8 @@ interface InitialState {
   getNowPlayingMovieListObj: InterfaceInitialState;
   getUpcomingMovieListObj: InterfaceInitialState;
   getPopularMovieListObj: InterfaceInitialState;
+  getMovieDetailObj: InterfaceInitialState;
+  getMovieCreditObj: InterfaceInitialState;
 }
 
 export const getNowPlayingMovieList = createAsyncThunk(
@@ -39,6 +41,20 @@ export const getPopularMovieList = createAsyncThunk(
   },
 );
 
+export const getMovieDetails = createAsyncThunk(
+  '/movie/details',
+  async ({ movieId }: { movieId: number }) => {
+    return get(`/${movieId}?language=en-US`);
+  },
+);
+
+export const getMovieCredit = createAsyncThunk(
+  '/movie/credit',
+  async ({ movieId }: { movieId: number }) => {
+    return get(`/${movieId}/credits?language=en-US`);
+  },
+);
+
 export const MovieSlice = createSlice({
   name: 'movie',
   initialState: {
@@ -53,6 +69,16 @@ export const MovieSlice = createSlice({
       payload: null,
     },
     getPopularMovieListObj: {
+      status: 'idle',
+      message: '',
+      payload: null,
+    },
+    getMovieDetailObj: {
+      status: 'idle',
+      message: '',
+      payload: null,
+    },
+    getMovieCreditObj: {
       status: 'idle',
       message: '',
       payload: null,
@@ -101,6 +127,34 @@ export const MovieSlice = createSlice({
       state.getPopularMovieListObj.message = action.error.message || '';
       state.getPopularMovieListObj.status = 'rejected';
       state.getPopularMovieListObj.payload = null;
+    });
+    builder.addCase(getMovieDetails.pending, state => {
+      state.getMovieDetailObj.status = 'pending';
+      state.getMovieDetailObj.payload = null;
+    });
+    builder.addCase(getMovieDetails.fulfilled, (state, action) => {
+      state.getMovieDetailObj.message = '';
+      state.getMovieDetailObj.status = 'succeeded';
+      state.getMovieDetailObj.payload = action.payload;
+    });
+    builder.addCase(getMovieDetails.rejected, (state, action) => {
+      state.getMovieDetailObj.message = action.error.message || '';
+      state.getMovieDetailObj.status = 'rejected';
+      state.getMovieDetailObj.payload = null;
+    });
+    builder.addCase(getMovieCredit.pending, state => {
+      state.getMovieCreditObj.status = 'pending';
+      state.getMovieCreditObj.payload = null;
+    });
+    builder.addCase(getMovieCredit.fulfilled, (state, action) => {
+      state.getMovieCreditObj.message = '';
+      state.getMovieCreditObj.status = 'succeeded';
+      state.getMovieCreditObj.payload = action.payload;
+    });
+    builder.addCase(getMovieCredit.rejected, (state, action) => {
+      state.getMovieCreditObj.message = action.error.message || '';
+      state.getMovieCreditObj.status = 'rejected';
+      state.getMovieCreditObj.payload = null;
     });
   },
 });

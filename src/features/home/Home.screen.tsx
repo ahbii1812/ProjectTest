@@ -1,5 +1,10 @@
 import { FlatList, SafeAreaView, View } from 'react-native';
-import { COLORS, DEFAULT_SPACING, SCREEN_PADDING } from '../../theme/theme';
+import {
+  COLORS,
+  DEFAULT_SPACING,
+  SCREEN_PADDING,
+  SHADOW_STYLE,
+} from '../../theme/theme';
 import AppHeader from '../../components/AppHeader';
 import { useEffect, useState } from 'react';
 import { AppDispatch } from '../../store/store';
@@ -50,9 +55,18 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <FlatList
-        contentContainerStyle={{ paddingHorizontal: SCREEN_PADDING }}
+        bounces={false}
+        stickyHeaderIndices={[0]}
+        stickyHeaderHiddenOnScroll
         ListHeaderComponent={
-          <View>
+          <View
+            style={{
+              backgroundColor: COLORS.white,
+              padding: SCREEN_PADDING,
+              paddingTop: 0,
+              ...SHADOW_STYLE,
+            }}
+          >
             <AppHeader />
             <DropdownPicker
               itemList={[
@@ -73,7 +87,6 @@ export default function HomeScreen() {
             />
             <View style={{ height: DEFAULT_SPACING }} />
             <CTAButton text="Search" onPress={() => {}} />
-            <View style={{ height: DEFAULT_SPACING }} />
             <View style={{ height: DEFAULT_SPACING }} />
           </View>
         }

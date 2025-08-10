@@ -8,7 +8,7 @@ const httpRequest = axios.create({
   headers: {
     Accept: 'application/json',
     Authorization: `Bearer ${process.env.API_TOKEN}`,
-    'Content-Type': 'application/json;charset=utf-8',
+    'Content-Type': '*',
   },
 });
 
