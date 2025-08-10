@@ -19,6 +19,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { AppDispatch } from '../../store/store';
 import { getUserDetails, userSelector } from '../../store/UserSlice';
 import { useSelector } from 'react-redux';
+import Spacer from '../../components/Spacer';
 
 type Sorting = 'alphabetical' | 'rating' | 'release date';
 
@@ -87,7 +88,7 @@ export default function WishlistScreen() {
                     {getUserDetailsObj.payload?.username[0] || 'U'}
                   </AppText>
                 </View>
-                <View style={{ width: DEFAULT_SPACING }} />
+                <Spacer oriental="horizontal" />
                 <View>
                   <AppText variant="Button-Label">
                     {getUserDetailsObj.payload?.username || 'Username'}
@@ -108,7 +109,7 @@ export default function WishlistScreen() {
                 <AppText style={{ color: COLORS.placeholder }}>
                   Filter by:
                 </AppText>
-                <View style={{ width: DEFAULT_SPACING }} />
+                <Spacer oriental="horizontal" />
                 <MiniDropdown
                   value={sortBy}
                   setValue={newValue => setSortBy(newValue as Sorting)}
@@ -118,7 +119,7 @@ export default function WishlistScreen() {
                     { label: 'Release Date', value: 'release date' },
                   ]}
                 />
-                <View style={{ width: DEFAULT_SPACING }} />
+                <Spacer oriental="horizontal" />
                 <AppText style={{ color: COLORS.placeholder }}>
                   Order by:
                 </AppText>
@@ -136,7 +137,7 @@ export default function WishlistScreen() {
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
-                <View style={{ width: DEFAULT_SPACING }} />
+                <Spacer oriental="horizontal" />
               </View>
             </View>
           </View>

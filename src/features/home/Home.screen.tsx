@@ -30,6 +30,7 @@ import { useSelector } from 'react-redux';
 import AppText from '../../components/AppText';
 import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
 import { getData, storeData } from '../../store/LocalStorage';
+import Spacer from '../../components/Spacer';
 
 type Sorting = 'alphabetical' | 'rating' | 'release date' | null;
 
@@ -180,7 +181,7 @@ export default function HomeScreen() {
               value={category}
               setValue={newValue => onCategoryChange(newValue as MovieCategory)}
             />
-            <View style={{ height: DEFAULT_SPACING }} />
+            <Spacer />
             <DropdownPicker
               placeholder="Sort by"
               itemList={[
@@ -194,7 +195,7 @@ export default function HomeScreen() {
                 storeData(LOCAL_STORAGE_KEY.SORTING_PREFERENCE, newValue);
               }}
             />
-            <View style={{ height: DEFAULT_SPACING }} />
+            <Spacer />
             <TextInputField
               value={searchValue}
               onChangeText={text => {
@@ -207,12 +208,12 @@ export default function HomeScreen() {
               autoFocus={false}
               returnKeyType="done"
             />
-            <View style={{ height: DEFAULT_SPACING }} />
+            <Spacer />
             <CTAButton
               text="Search"
               onPress={() => setTempSearch(searchValue)}
             />
-            <View style={{ height: DEFAULT_SPACING }} />
+            <Spacer />
           </View>
         }
         extraData={filteredData}

@@ -27,6 +27,7 @@ import { useSelector } from 'react-redux';
 import { getData, storeData } from '../../store/LocalStorage';
 import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
 import { MovieDetails } from '../../components/MovieItemBox';
+import Spacer from '../../components/Spacer';
 
 type Props = NativeStackScreenProps<CustomNavigatorList, 'Movie Detail'>;
 
@@ -158,7 +159,7 @@ export default function MovieDetail({ route }: Props) {
                     uri: `${process.env.API_IMAGE_DOMAIN}/w500${getMovieDetailObj.payload?.poster_path}`,
                   }}
                 />
-                <View style={{ width: DEFAULT_SPACING }} />
+                <Spacer oriental="horizontal" />
                 <View style={styles.DetailsContainer}>
                   <View style={styles.PG13Container}>
                     <AppText variant="Movie-Detail-Value">
@@ -200,7 +201,7 @@ export default function MovieDetail({ route }: Props) {
                   <AppText variant="Movie-Detail-Label">
                     {getMovieDetailObj.payload?.vote_average}
                   </AppText>
-                  <View style={{ height: DEFAULT_SPACING }} />
+                  <Spacer />
                   <AppText variant="Movie-Detail-Label">Avg. Rating</AppText>
                 </View>
                 <View style={{ width: '50%' }}>
@@ -210,15 +211,15 @@ export default function MovieDetail({ route }: Props) {
                   <AppText variant="Movie-Detail-Value">
                     Director, Writer
                   </AppText>
-                  <View style={{ height: DEFAULT_SPACING }} />
+                  <Spacer />
                   <AppText variant="Movie-Detail-Label">
                     {getWriterName}
                   </AppText>
                   <AppText variant="Movie-Detail-Value">Writer</AppText>
                 </View>
               </View>
-              <View style={{ height: DEFAULT_SPACING }} />
-              <View style={{ height: DEFAULT_SPACING }} />
+              <Spacer />
+              <Spacer />
               <AppText
                 style={{
                   fontStyle: 'italic',
@@ -226,14 +227,14 @@ export default function MovieDetail({ route }: Props) {
                   color: COLORS.white,
                 }}
               >{`${getMovieDetailObj.payload?.tagline}`}</AppText>
-              <View style={{ height: DEFAULT_SPACING }} />
+              <Spacer />
               <AppText variant="Overview-Label">Overview</AppText>
-              <View style={{ height: DEFAULT_SPACING }} />
+              <Spacer />
               <AppText variant="Movie-Detail-Value">
                 {getMovieDetailObj.payload?.overview}
               </AppText>
-              <View style={{ height: DEFAULT_SPACING }} />
-              <View style={{ height: DEFAULT_SPACING }} />
+              <Spacer />
+              <Spacer />
               {!isWishList && (
                 <TouchableOpacity
                   style={styles.AddToWishListButton}
@@ -244,18 +245,18 @@ export default function MovieDetail({ route }: Props) {
                     style={{ width: 15, height: 20 }}
                     resizeMode="contain"
                   />
-                  <View style={{ width: DEFAULT_SPACING }} />
+                  <Spacer oriental="horizontal" />
                   <AppText variant="Movie-Detail-Value">
                     Add to wishlist
                   </AppText>
                 </TouchableOpacity>
               )}
-              <View style={{ height: DEFAULT_SPACING }} />
-              <View style={{ height: DEFAULT_SPACING }} />
+              <Spacer />
+              <Spacer />
             </View>
           </View>
-          <View style={{ height: DEFAULT_SPACING }} />
-          <View style={{ height: DEFAULT_SPACING }} />
+          <Spacer />
+          <Spacer />
           <AppText style={styles.SectionTitle}>Top Billed Cast</AppText>
           <FlatList
             contentContainerStyle={{ padding: 20 }}
@@ -280,8 +281,8 @@ export default function MovieDetail({ route }: Props) {
               </View>
             )}
           />
-          <View style={{ height: DEFAULT_SPACING }} />
-          <View style={{ height: DEFAULT_SPACING }} />
+          <Spacer />
+          <Spacer />s
           {getRecommendedMovieObj.payload?.results?.length > 0 && (
             <AppText style={styles.SectionTitle}>Recommended movies</AppText>
           )}
