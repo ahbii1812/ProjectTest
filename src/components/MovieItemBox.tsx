@@ -3,6 +3,7 @@ import AppText from './AppText';
 import { COLORS, DEFAULT_SPACING, SHADOW_STYLE } from '../theme/theme';
 import useCustomNavigation from '../navigator/CustomNavHook';
 import { SCREEN_KEY } from '../constants/ScreenKey';
+import { IMAGE_DOMAIN } from '../constants/Constants';
 
 export interface MovieDetails {
   title: string;
@@ -53,7 +54,7 @@ export default function MovieItemBox({
         style={styles.posterImg}
         resizeMode="contain"
         source={{
-          uri: `${process.env.API_IMAGE_DOMAIN}/w200${poster_path}`,
+          uri: `${IMAGE_DOMAIN}/w200${poster_path}`,
         }}
       />
       <View style={styles.textBox}>

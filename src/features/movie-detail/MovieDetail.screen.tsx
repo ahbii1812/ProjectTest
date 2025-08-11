@@ -28,6 +28,7 @@ import { LOCAL_STORAGE_KEY } from '../../store/LocalStorageKey';
 import { MovieDetails } from '../../components/MovieItemBox';
 import Spacer from '../../components/Spacer';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { IMAGE_DOMAIN } from '../../constants/Constants';
 
 type Props = RouteProp<CustomNavigatorList, 'Movie Detail'>;
 
@@ -157,7 +158,7 @@ export default function MovieDetail() {
                   style={{ width: 110, height: 135 }}
                   resizeMode="cover"
                   source={{
-                    uri: `${process.env.API_IMAGE_DOMAIN}/w500${getMovieDetailObj.payload?.poster_path}`,
+                    uri: `${IMAGE_DOMAIN}/w500${getMovieDetailObj.payload?.poster_path}`,
                   }}
                 />
                 <Spacer oriental="horizontal" />
@@ -263,7 +264,7 @@ export default function MovieDetail() {
                   resizeMode="cover"
                   style={styles.CastMemberImg}
                   source={{
-                    uri: `${process.env.API_IMAGE_DOMAIN}/w500${item.profile_path}`,
+                    uri: `${IMAGE_DOMAIN}/w500${item.profile_path}`,
                   }}
                 />
 
@@ -291,7 +292,7 @@ export default function MovieDetail() {
                   resizeMode="cover"
                   style={styles.RecommendationImg}
                   source={{
-                    uri: `${process.env.API_IMAGE_DOMAIN}/w500${item.backdrop_path}`,
+                    uri: `${IMAGE_DOMAIN}/w500${item.backdrop_path}`,
                   }}
                 />
 
